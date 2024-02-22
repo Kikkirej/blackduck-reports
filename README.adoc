@@ -1,0 +1,57 @@
+= BlackDuck Reports
+
+== Workflow
+
+The following is a high-level overview of the workflow for using the BlackDuck Reports program:
+
+[plantuml, activity, svg]
+----
+start
+:extract or manually build a list of BlacDuck Projects with metadata. Can be exported from other platforms;
+:Configure BlackDuck Report Tool;
+:Run stack;
+:Write results in relational and time series database;
+:display results in grafana;
+----
+
+== Architecture
+
+[plantuml, component, svg]
+----
+[BlackDuck Reports] as BRT
+[BlackDuck] as BD
+database [Relational Database] as RDB
+database [Time Series Database] as TSDB
+[Grafana] as G
+[Reverse Proxy] as RP
+
+BRT -u-> BD: Extract Data
+BRT -> RDB: Write relational data
+BRT -u-> TSDB: Write time series data
+G -l-> RDB: Read relational data
+G -l-> TSDB: Read time series data
+RP -d-> G: Serve Grafana
+----
+
+The service pulls in a defined interval information regarding the blackduck projects and persists in the databases. Grafana accesses the data in real time and visualizes it.
+
+FOr visualization, the service uses Grafana, which is served by a reverse proxy. As reversed proxy traefik is used.
+
+As relational database the service uses PostgreSQL and as time series database Prometheus.
+
+== Deployment
+
+For easy Deployment a Docker Compose File is provisione, which can easily be started. It is in the folder `deployment`.
+This deployment is containing an example configuration and is deploying the services from the architecture section.
+
+== Project List Format
+
+// TODO: Add a description of the project list format
+
+== Configuration
+
+// TODO
+
+== Visualization
+
+// TODO
